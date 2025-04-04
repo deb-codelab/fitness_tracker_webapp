@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+<<<<<<< HEAD
+=======
+!.env.example
+>>>>>>> dev
 
 # vercel
 .vercel
@@ -39,3 +43,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+<<<<<<< HEAD
+=======
+
+# JetBrains IDE
+.idea/
+
+# VSCode IDE
+.vscode
+>>>>>>> dev
