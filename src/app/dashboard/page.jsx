@@ -5,7 +5,6 @@ import { Card, Row, Col } from "react-bootstrap";
 export default function Dashboard() {
   return (
     <div>
-      <h2>Fitness Dashboard</h2>
       <Row>
         <Col md={4}>
           <Card className="p-3 shadow">

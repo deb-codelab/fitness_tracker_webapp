@@ -1,24 +1,20 @@
-"use client";
-import { Container, Nav, Navbar, Row, Col } from "react-bootstrap";
+
+import { Container, Row, Col } from "react-bootstrap";
+import DashboardSidebar from "@/components/Dashboard/DashboardSidebar";
+import DashboardNavbar from "@/components/Dashboard/DashboardNavbar";
 
 export default function DashbaordLayout({ children }) {
   return (
-      <Container fluid>
-        <Row>
-          {/* Sidebar */}
-          <Col md={2} className="bg-light p-3">
-            <Nav className="flex-column mt-2">
-              <Nav.Link href="/dashboard">Dashboard</Nav.Link>
-              <Nav.Link href="/dashboard/profile">Profile</Nav.Link>
-              <Nav.Link href="/dashboard/workout">Workout</Nav.Link>
-              <Nav.Link href="/dashboard/goals">Goals</Nav.Link>
-            </Nav>
-          </Col>
-
-          {/* Main Content */}
-          <Col md={10} className="p-4" style={{ minHeight: "100vh" }}>{children}</Col>
-        </Row>
-      </Container>
-
+    <Container fluid className="d-flex flex-column min-vh-100">
+      <Row className="flex-grow-1">
+        {/* Sidebar */}
+        <DashboardSidebar/>
+        {/* Main Content */}
+        <Col md={{ span: 10, offset: 2 }} className="min-vh-100">
+          <DashboardNavbar />
+          <Row className="p-3">{children}</Row>
+        </Col>
+      </Row>
+    </Container>
   );
 }

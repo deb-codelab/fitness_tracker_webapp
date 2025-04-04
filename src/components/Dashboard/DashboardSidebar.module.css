@@ -1,0 +1,16 @@
+.customNavlink {
+ color: #9f9e9e;
+}
+
+a.customNavlink.active {
+ color: #4d4d4d;
+ font-weight: 600;
+}
+.customNavlink:focus, .customNavlink:hover {
+ color: #6e6f70;
+ font-weight: 500;
+}
+
+.bgCustomSidebar {
+  background: linear-gradient(90deg, rgba(0, 59, 63, 1) 0%, rgba(136, 112, 229, 1) 50%, rgba(0, 23, 44, 1) 100%);
+}

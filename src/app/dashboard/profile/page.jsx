@@ -7,6 +7,10 @@ export default function ProfileForm() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
+    address: "",
+    gender: "",
+    dob: "",
     bio: "",
     profilePicture: null,
   });
@@ -29,8 +33,7 @@ export default function ProfileForm() {
   return (
     <Container>
       <Row className="justify-content-md-center">
-        <Col md={6}>
-          <h2 className="my-4 text-center">Add Profile Details</h2>
+        <Col md={8}>
           <Form onSubmit={handleSubmit}>
             {/* Name Field */}
             <Form.Group className="mb-3" controlId="name">
@@ -54,6 +57,55 @@ export default function ProfileForm() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
+                required
+              />
+            </Form.Group>
+
+            {/* Phone Number Field */}
+            <Form.Group className="mb-3" controlId="phone">
+              <Form.Label>Phone Number</Form.Label>
+              <Form.Control
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Enter your phone number"
+                required
+              />
+            </Form.Group>
+
+            {/* Address Field */}
+            <Form.Group className="mb-3" controlId="address">
+              <Form.Label>Address</Form.Label>
+              <Form.Control
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Enter your address"
+                required
+              />
+            </Form.Group>
+
+            {/* Gender Field */}
+            <Form.Group className="mb-3" controlId="gender">
+              <Form.Label>Gender</Form.Label>
+              <Form.Select name="gender" value={formData.gender} onChange={handleChange} required>
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </Form.Select>
+            </Form.Group>
+
+            {/* Date of Birth Field */}
+            <Form.Group className="mb-3" controlId="dob">
+              <Form.Label>Date of Birth</Form.Label>
+              <Form.Control
+                type="date"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
                 required
               />
             </Form.Group>
