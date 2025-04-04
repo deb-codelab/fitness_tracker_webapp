@@ -16,7 +16,7 @@ export default function Auth() {
 
   const onSubmit = async (data) => {
     const endpoint = isLogin
-      ? `/api/auth/login/`
+      ? '/api/auth/login'
       : `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signup`;
 
     try {
@@ -32,8 +32,8 @@ export default function Auth() {
       }
 
       if (result.ok) {
-        //router.refresh();
-        router.push("/admin");
+        router.refresh();
+        router.push("/dashboard");
       }
     } catch (error) {
       console.log(error);

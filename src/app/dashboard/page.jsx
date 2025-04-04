@@ -5,29 +5,29 @@ import { Card, Row, Col } from "react-bootstrap";
 export default function Dashboard() {
   return (
     <div>
-      <h2>Admin Dashboard</h2>
+      <h2>Fitness Dashboard</h2>
       <Row>
         <Col md={4}>
           <Card className="p-3 shadow">
             <Card.Body>
-              <h4>Total Users</h4>
-              {/* <p>{user.totalUsers}</p> */}
+              <h4>Exercises</h4>
+              <p>{2}</p>
             </Card.Body>
           </Card>
         </Col>
         <Col md={4}>
           <Card className="p-3 shadow">
             <Card.Body>
-              <h4>New Orders</h4>
-              {/* <p>{user.newOrders}</p> */}
+              <h4>Meals</h4>
+              <p>{3}</p>
             </Card.Body>
           </Card>
         </Col>
         <Col md={4}>
           <Card className="p-3 shadow">
             <Card.Body>
-              <h4>Revenue</h4>
-              {/* <p>${user.revenue}</p> */}
+              <h4>Sleep</h4>
+              <p>{8}</p>
             </Card.Body>
           </Card>
         </Col>

@@ -2,14 +2,14 @@ import { cookies } from "next/headers";
 
 export async function POST(req) {
   const body = await req.json();
-  console.log("hello");
+
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",
       body: JSON.stringify(body),
+      credentials: "include",
     }
   );
 
@@ -21,13 +21,14 @@ export async function POST(req) {
 
   // Extract and save the cookie
   const setCookieHeader = response.headers.get("set-cookie");
+
   if (setCookieHeader) {
-    cookies().set("auth_token", "secure_token_value", {
+    const cookieStore = await cookies();
+    cookieStore.set("auth_token", setCookieHeader.split(";")[0].split("=")[1], {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 86400000,
-      sameSite: "Strict",
-      path: "/",
+      sameSite: "lax",
     });
   }
 

@@ -19,7 +19,6 @@ const Header = () => {
             <NavLink as={Link} href="/contact">Contact</NavLink>
             <NavDropdown title={<img src={userImageUrl} alt="User" width="30" height="30" className="rounded-circle" />} id="user-dropdown" align="end">
               <NavDropdown.Item onClick={(e) => { e.preventDefault(); router.push('/profile'); }}>Profile</NavDropdown.Item>
-              <NavDropdown.Item onClick={(e) => { e.preventDefault(); router.push('/settings'); }}>Settings</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={(e) => { e.preventDefault(); router.push('/auth'); }}>Login</NavDropdown.Item>
             </NavDropdown>
@@ -44,7 +43,7 @@ export default function Layout({ children }) {
   return (
     <html lang="en">
       <body>
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col">
           <Header />
             <main className="flex-grow mt-5">{children}</main>
           <Footer />

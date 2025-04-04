@@ -5,7 +5,9 @@ import { cookies } from "next/headers";
 export async function middleware(req) {
   try {
     // Redirect to login if no token in cookies
-    const token = cookies().get("auth_token");
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auth_token")?.value;
+
     if (!token) {
       return NextResponse.redirect(new URL("/auth", req.url));
     }
@@ -15,17 +17,12 @@ export async function middleware(req) {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/verify-token`,
       {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         credentials: "include", // Ensure cookies are sent
-        headers: {
-          "Access-Control-AllowCredentials": true,
-          Cookie: ContentVisibilityAutoStateChangeEvent.req.headers.Cookie,
-        },
       }
     );
-
     const data = await result.json();
-    console.log(data);
+
     if (!data.valid) {
       return NextResponse.redirect(new URL("/auth", req.url)); // Redirect if invalid
     }
@@ -39,5 +36,5 @@ export async function middleware(req) {
 
 // Protect all routes under /admins
 export const config = {
-  matcher: "/admin/:path*",
+   matcher: ["/admin/:path*", "/dashboard/:path*"],
 };
