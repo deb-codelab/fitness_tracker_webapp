@@ -4,7 +4,7 @@ import styles from "./DashboardSidebar.module.css";
 
 const DashboardSidebar = () => {
   return (
-    <Col md={2} className="bg-light position-fixed d-flex flex-column min-vh-100 shadow-sm p-3">
+    <Col md={2} className={`${styles.bgCustomSidebar} position-fixed d-flex flex-column min-vh-100 p-3 mt-5`}>
         <Nav className="flex-column mt-2">
         <NavLink as={Link} href="/dashboard" className={styles.customNavlink}>Dashboard</NavLink>
         <NavLink as={Link} href="/dashboard/profile" className={styles.customNavlink}>Profile</NavLink>

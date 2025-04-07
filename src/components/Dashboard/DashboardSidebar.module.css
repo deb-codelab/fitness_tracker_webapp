@@ -1,16 +1,35 @@
-.customNavlink {
- color: #9f9e9e;
+@keyframes textGlow {
+  0% {
+    opacity: 1;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    opacity: 0.8;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.8), 0 0 12px rgba(0, 255, 255, 0.4);
+  }
+  100% {
+    opacity: 1;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+  }
 }
 
-a.customNavlink.active {
- color: #4d4d4d;
- font-weight: 600;
+.customNavlink {
+ color: #b9b9b9;
+ font-weight: 200;
 }
-.customNavlink:focus, .customNavlink:hover {
- color: #6e6f70;
+
+.customNavlink:focus {
+ color: #eeeeee;
  font-weight: 500;
+ animation: textGlow 1.8s ease-in-out infinite;
+}
+
+.customNavlink:hover {
+ color: #cfcfcf;
+ font-weight: 300;
 }
 
 .bgCustomSidebar {
-  background: linear-gradient(90deg, rgba(0, 59, 63, 1) 0%, rgba(136, 112, 229, 1) 50%, rgba(0, 23, 44, 1) 100%);
+  background-color: #353535;
+  box-shadow: 5px 9px 8px 0px #7c7c7c;
 }

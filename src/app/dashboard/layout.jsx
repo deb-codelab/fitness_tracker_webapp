@@ -1,7 +1,7 @@
 
 import { Container, Row, Col } from "react-bootstrap";
 import DashboardSidebar from "@/components/Dashboard/DashboardSidebar";
-import DashboardNavbar from "@/components/Dashboard/DashboardNavbar";
+import DashboardTitlebar from "@/components/Dashboard/DashboardTitlebar";
 
 export default function DashbaordLayout({ children }) {
   return (
@@ -11,7 +11,7 @@ export default function DashbaordLayout({ children }) {
         <DashboardSidebar/>
         {/* Main Content */}
         <Col md={{ span: 10, offset: 2 }} className="min-vh-100">
-          <DashboardNavbar />
+          <DashboardTitlebar />
           <Row className="p-3">{children}</Row>
         </Col>
       </Row>

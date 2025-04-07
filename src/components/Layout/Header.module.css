@@ -1,3 +1,36 @@
 .bgCustom {
-  background: linear-gradient(90deg, rgba(0, 59, 63, 1) 0%, rgba(136, 112, 229, 1) 50%, rgba(0, 23, 44, 1) 100%);
+ background-color: #353535;
+  box-shadow: 0px 1px 8px #000000;
+}
+
+@keyframes shineSlide {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.brandCustomText {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  font-weight: 500;
+  background: linear-gradient(
+    to right,
+    #828282 0%,
+    #ffffff 10%,
+    #828282 30%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: shineSlide 4s infinite linear;
+  background-size: 200% auto;
+
+}
+
+.no-caret .dropdown-toggle::after {
+  display: none !important;
 }

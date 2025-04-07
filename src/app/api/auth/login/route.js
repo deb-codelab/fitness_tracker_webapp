@@ -19,6 +19,9 @@ export async function POST(req) {
     });
   }
 
+  // Parse the response to get user data
+  const responseData = await response.json();
+
   // Extract and save the cookie
   const setCookieHeader = response.headers.get("set-cookie");
 
@@ -33,7 +36,7 @@ export async function POST(req) {
   }
 
   return new Response(
-    JSON.stringify({ message: "Cookie saved in Next.js backend" }),
+    JSON.stringify({ message: "Logged In", userData: responseData.userData }),
     { status: 200 }
   );
 }

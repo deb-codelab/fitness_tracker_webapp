@@ -1,0 +1,17 @@
+.customTitleBar {
+    position: sticky;
+    top: 56px;
+    z-index: 1020;
+    background-color: #f8f9fa;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0px 3px 8px 5px #dfdfdf;
+}
+
+.customPageTitle {
+    font-size: 24px;
+    font-weight: 300;
+    color: #696969;
+    margin-left: 16px;
+}

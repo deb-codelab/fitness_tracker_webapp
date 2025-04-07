@@ -3,25 +3,53 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Navbar, Nav, NavDropdown, NavLink, NavbarBrand, NavbarToggle, NavbarCollapse } from "react-bootstrap";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import styles from "./Header.module.css";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const userImageUrl = "/user.svg"; // Replace with actual remote URL
+  const { user, logout } = useAuth();
   const router = useRouter();
 
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/auth/logout", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        logout();
+        router.push("/auth");
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
+
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" fixed="top" className={styles.bgCustom}>
+    <Navbar variant="dark" expand="lg" fixed="top" className={styles.bgCustom}>
       <Container>
-        <NavbarBrand as={Link} href="/">Fitness Tracker</NavbarBrand>
+        <NavbarBrand as={Link} href="/" className={styles.brandCustomText}>Fitness Tracker</NavbarBrand>
         <NavbarToggle aria-controls="basic-navbar-nav" />
         <NavbarCollapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            <NavDropdown title={<img src={userImageUrl} alt="User" width="30" height="30" className="rounded-circle" />} id="user-dropdown" align="end">
-              <NavDropdown.Item as={Link} href="/dashboard">Dashbaord</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item as={Link} href="/auth">Login</NavDropdown.Item>
-              <NavDropdown.Item as={Link} href="/logout">Logout</NavDropdown.Item>
+            <NavDropdown title={<span className="d-inline-flex align-items-center gap-2"><img src={userImageUrl} alt="User" width="20" height="20" className="" /> <span>Hello, {user?.name || "Guest"}</span></span>} id="user-dropdown" align="end">
+              {user ? (
+                <>
+                  <NavDropdown.Item as={Link} href="/dashboard">Dashboard</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} href="/dashboard/profile">Manage Account</NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+                </>
+              ) : (
+                <>
+                  <NavDropdown.Item as={Link} href="/auth">Login</NavDropdown.Item>
+                </>
+              )}
             </NavDropdown>
           </Nav>
         </NavbarCollapse>
