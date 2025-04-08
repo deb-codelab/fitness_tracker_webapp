@@ -1,17 +1,15 @@
-"use client"; // Required for Next.js app router
+"use client";
 
 import { useState } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 
 export default function ProfileForm() {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
     gender: "",
     dob: "",
     bio: "",
+    bloodGroup: "",
+    height: "",
     profilePicture: null,
   });
 
@@ -27,78 +25,16 @@ export default function ProfileForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Submitted Data:", formData);
-    // Handle form submission (e.g., send data to API)
+    // API call or form processing here
   };
 
   return (
-    <Container>
+    <Container className="py-5">
       <Row className="justify-content-md-center">
         <Col md={8}>
           <Form onSubmit={handleSubmit}>
-            {/* Name Field */}
-            <Form.Group className="mb-3" controlId="name">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter your name"
-                required
-              />
-            </Form.Group>
 
-            {/* Email Field */}
-            <Form.Group className="mb-3" controlId="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                required
-              />
-            </Form.Group>
-
-            {/* Phone Number Field */}
-            <Form.Group className="mb-3" controlId="phone">
-              <Form.Label>Phone Number</Form.Label>
-              <Form.Control
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="Enter your phone number"
-                required
-              />
-            </Form.Group>
-
-            {/* Address Field */}
-            <Form.Group className="mb-3" controlId="address">
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                placeholder="Enter your address"
-                required
-              />
-            </Form.Group>
-
-            {/* Gender Field */}
-            <Form.Group className="mb-3" controlId="gender">
-              <Form.Label>Gender</Form.Label>
-              <Form.Select name="gender" value={formData.gender} onChange={handleChange} required>
-                <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </Form.Select>
-            </Form.Group>
-
-            {/* Date of Birth Field */}
+            {/* Date of Birth */}
             <Form.Group className="mb-3" controlId="dob">
               <Form.Label>Date of Birth</Form.Label>
               <Form.Control
@@ -106,11 +42,57 @@ export default function ProfileForm() {
                 name="dob"
                 value={formData.dob}
                 onChange={handleChange}
-                required
               />
             </Form.Group>
 
-            {/* Bio Field */}
+            {/* Gender */}
+            <Form.Group className="mb-3" controlId="gender">
+              <Form.Label>Gender</Form.Label>
+              <Form.Select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+              >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </Form.Select>
+            </Form.Group>
+
+            {/* Blood Group */}
+            <Form.Group className="mb-3" controlId="bloodGroup">
+              <Form.Label>Blood Group</Form.Label>
+              <Form.Select
+                name="bloodGroup"
+                value={formData.bloodGroup}
+                onChange={handleChange}
+              >
+                <option value="">Select Blood Group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+              </Form.Select>
+            </Form.Group>
+
+            {/* Height */}
+            <Form.Group className="mb-3" controlId="height">
+              <Form.Label>Height (in cm)</Form.Label>
+              <Form.Control
+                type="text"
+                name="height"
+                value={formData.height}
+                onChange={handleChange}
+                placeholder="e.g. 170"
+              />
+            </Form.Group>
+
+            {/* Bio */}
             <Form.Group className="mb-3" controlId="bio">
               <Form.Label>Bio</Form.Label>
               <Form.Control
@@ -123,13 +105,13 @@ export default function ProfileForm() {
               />
             </Form.Group>
 
-            {/* Profile Picture Upload */}
-            <Form.Group className="mb-3" controlId="profilePicture">
+            {/* Profile Picture */}
+            <Form.Group className="mb-4" controlId="profilePicture">
               <Form.Label>Profile Picture</Form.Label>
               <Form.Control type="file" onChange={handleFileChange} />
             </Form.Group>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <Button variant="primary" type="submit" className="w-100">
               Save Profile
             </Button>

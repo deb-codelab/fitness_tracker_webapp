@@ -41,7 +41,7 @@ const Header = () => {
               {user ? (
                 <>
                   <NavDropdown.Item as={Link} href="/dashboard">Dashboard</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} href="/dashboard/profile">Manage Account</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} href="/dashboard/manage-account">Manage Account</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
                 </>
