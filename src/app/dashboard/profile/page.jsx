@@ -29,21 +29,10 @@ export default function ProfileForm() {
   };
 
   return (
-    <Container className="py-5">
+    <Container className="py-1">
       <Row className="justify-content-md-center">
         <Col md={8}>
           <Form onSubmit={handleSubmit}>
-
-            {/* Date of Birth */}
-            <Form.Group className="mb-3" controlId="dob">
-              <Form.Label>Date of Birth</Form.Label>
-              <Form.Control
-                type="date"
-                name="dob"
-                value={formData.dob}
-                onChange={handleChange}
-              />
-            </Form.Group>
 
             {/* Gender */}
             <Form.Group className="mb-3" controlId="gender">
@@ -89,6 +78,19 @@ export default function ProfileForm() {
                 value={formData.height}
                 onChange={handleChange}
                 placeholder="e.g. 170"
+              />
+            </Form.Group>
+
+            {/* Address Field */}
+            <Form.Group className="mb-3" controlId="address">
+              <Form.Label>Address</Form.Label>
+              <Form.Control
+                type="textarea"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Enter your address"
+                required
               />
             </Form.Group>
 

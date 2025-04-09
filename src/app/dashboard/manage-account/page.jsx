@@ -84,19 +84,6 @@ export default function ProfileForm() {
               />
             </Form.Group>
 
-            {/* Address Field */}
-            <Form.Group className="mb-3" controlId="address">
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                placeholder="Enter your address"
-                required
-              />
-            </Form.Group>
-
             {/* Submit Button */}
             <Button variant="primary" type="submit" className="w-100">
               Save Profile
