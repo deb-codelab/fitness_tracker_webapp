@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import { toast } from "react-hot-toast"; // Import toast for notifications
 
 export default function ProfileForm() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ export default function ProfileForm() {
     bloodGroup: "",
     height: "",
     profilePicture: null,
+    address: "",
   });
 
   const handleChange = (e) => {
@@ -19,13 +21,108 @@ export default function ProfileForm() {
   };
 
   const handleFileChange = (e) => {
-    setFormData({ ...formData, profilePicture: e.target.files[0] });
+    const file = e.target.files[0];
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+    if (file && !allowedTypes.includes(file.type)) {
+      toast.error("Only JPG, JPEG, and PNG files are allowed.");
+      e.target.value = null; // Reset file input
+      return;
+    }
+
+    setFormData({ ...formData, profilePicture: file });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitted Data:", formData);
-    // API call or form processing here
+
+    let uploadedImageUrl = "";
+
+    if (formData.profilePicture) {
+      try {
+        // 1. Get presigned URL
+        const bearerToken = await fetch("/api/auth/get-token", {
+          method: "GET",
+          credentials: "include",
+        });
+        const data = await bearerToken.json();
+        const token = data.token;
+        console.log("Bearer Token:", token);
+        const fileType = formData.profilePicture.type;
+        const presignRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/s3/generate-upload-url?fileType=${fileType}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!presignRes.ok) {
+          const errorData = await presignRes.text();
+          console.error("Presign failed:", errorData);
+          toast.error("Failed to get upload URL.");
+          return;
+        }
+
+        const { uploadUrl, fileUrl } = await presignRes.json();
+        console.log("Presigned Upload URL:", uploadUrl);
+        console.log("Public File URL:", fileUrl);
+
+        // 2. Upload to S3
+        const uploadRes = await fetch(uploadUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": formData.profilePicture.type,
+          },
+          body: formData.profilePicture,
+        });
+
+        if (!uploadRes.ok) {
+          console.error("Upload failed");
+          toast.error("Image upload failed.");
+          return;
+        }
+
+        uploadedImageUrl = fileUrl;
+      } catch (err) {
+        console.error("Upload error:", err);
+        toast.error("Network error during upload.");
+        return;
+      }
+    }
+
+    // 3. Send profile data to backend
+    const profilePayload = {
+      gender: formData.gender,
+      dob: formData.dob,
+      bio: formData.bio,
+      bloodGroup: formData.bloodGroup,
+      height: formData.height,
+      address: formData.address,
+      profilePicture: uploadedImageUrl,
+    };
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-profile`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(profilePayload),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Profile saved successfully:", data);
+        toast.success("Profile saved!");
+      } else {
+        console.error("Failed to save profile");
+        toast.error("Failed to save profile.");
+      }
+    } catch (err) {
+      console.error("Error submitting form:", err);
+      toast.error("Error submitting profile.");
+    }
   };
 
   return (
@@ -33,7 +130,6 @@ export default function ProfileForm() {
       <Row className="justify-content-md-center">
         <Col md={8}>
           <Form onSubmit={handleSubmit}>
-
             {/* Gender */}
             <Form.Group className="mb-3" controlId="gender">
               <Form.Label>Gender</Form.Label>
@@ -85,10 +181,11 @@ export default function ProfileForm() {
             <Form.Group className="mb-3" controlId="address">
               <Form.Label>Address</Form.Label>
               <Form.Control
-                type="textarea"
+                as="textarea"
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
+                rows={3}
                 placeholder="Enter your address"
                 required
               />

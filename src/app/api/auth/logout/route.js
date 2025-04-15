@@ -11,7 +11,7 @@ export async function GET() {
       return new Response(JSON.stringify({ message: "Logout failed" }), { status: 500 });
     }
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     cookieStore.delete("auth_token"); // Delete the cookie
 
     return new Response(JSON.stringify({ message: "Logout successful" }), { status: 200 });

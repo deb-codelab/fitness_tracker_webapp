@@ -6,6 +6,7 @@ import Link from "next/link";
 import styles from "./Header.module.css";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 const Header = () => {
   const userImageUrl = "/user.svg"; // Replace with actual remote URL
@@ -20,7 +21,11 @@ const Header = () => {
       });
 
       if (res.ok) {
+        toast.success("Logged out successfully");
+        // Clear user data from context
         logout();
+        // Redirect to the login page
+        router.refresh();
         router.push("/auth");
       } else {
         console.error("Logout failed");

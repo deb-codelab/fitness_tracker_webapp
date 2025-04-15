@@ -8,9 +8,7 @@ export default function ProfileForm() {
     name: "",
     email: "",
     phone: "",
-    address: "",
     dob: "",
-    profilePicture: null,
   });
 
   const handleChange = (e) => {

@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation"; // New way to handle navigation in App Router
 import { Form, Button, Container, Card, Alert } from "react-bootstrap";
 import { useAuth } from "@/context/AuthContext";
+import { toast } from "react-hot-toast"; // Import toast for notifications
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,7 +15,6 @@ export default function Auth() {
     formState: { errors },
   } = useForm();
   const router = useRouter();
-
   const { login } = useAuth();
 
   const onSubmit = async (data) => {
@@ -30,16 +30,18 @@ export default function Auth() {
         credentials: "include",
       });
 
-      if (!result.ok) {
-        throw new Error(result.message || "Something went wrong");
-      }
+      const responseData = await result.json(); // 👈 this is key
 
-      if (result.ok) {
-        const responseData = await result.json();
-        login(responseData.userData); // Set user in context (from response)
+      if (!result.ok) {
+        toast.error(responseData.message);
+        throw new Error(responseData.message || "Something went wrong");
+      } else {
+        login(responseData.userData); // or responseData.user depending on backend
+        toast.success(responseData.message);
         router.refresh();
         router.push("/dashboard");
       }
+
     } catch (error) {
       console.log(error);
     }

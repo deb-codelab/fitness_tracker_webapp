@@ -22,6 +22,7 @@ export async function middleware(req) {
       }
     );
     const data = await result.json();
+    console.log("Token verification result:", data);
 
     if (!data.valid) {
       return NextResponse.redirect(new URL("/auth", req.url)); // Redirect if invalid
@@ -36,5 +37,5 @@ export async function middleware(req) {
 
 // Protect all routes under /admins
 export const config = {
-   matcher: ["/admin/:path*", "/dashboard/:path*"],
+  matcher: ["/admin/:path*", "/dashboard/:path*"],
 };

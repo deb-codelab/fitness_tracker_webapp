@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { NextResponse } from 'next/server';
 
 export async function POST(req) {
   const body = await req.json();
@@ -13,14 +14,15 @@ export async function POST(req) {
     }
   );
 
-  if (!response.ok) {
-    return new Response(JSON.stringify({ error: "Login failed" }), {
-      status: 401,
-    });
-  }
+  // Parse the response data
+  const data = await response.json();
 
-  // Parse the response to get user data
-  const responseData = await response.json();
+  if (!response.ok) {
+    return NextResponse.json(
+      { message: data.message },
+      { status: response.status }
+    );
+  }
 
   // Extract and save the cookie
   const setCookieHeader = response.headers.get("set-cookie");
@@ -35,8 +37,8 @@ export async function POST(req) {
     });
   }
 
-  return new Response(
-    JSON.stringify({ message: "Logged In", userData: responseData.userData }),
+  return NextResponse.json(
+    { message: data.message, userData: data.userData },
     { status: 200 }
   );
 }
