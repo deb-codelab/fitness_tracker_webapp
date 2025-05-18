@@ -3,17 +3,19 @@
 import { useState } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import { toast } from "react-hot-toast"; // Import toast for notifications
+import { useEffect } from "react";
 
 export default function ProfileForm() {
   const [formData, setFormData] = useState({
     gender: "",
-    dob: "",
     bio: "",
     bloodGroup: "",
     height: "",
     profilePicture: null,
     address: "",
   });
+
+  const [existingProfilePic, setExistingProfilePic] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,95 +35,155 @@ export default function ProfileForm() {
     setFormData({ ...formData, profilePicture: file });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    let uploadedImageUrl = "";
-
-    if (formData.profilePicture) {
+  useEffect(() => {
+    console.log("Fetching profile data...");
+    const fetchProfile = async () => {
       try {
-        // 1. Get presigned URL
         const bearerToken = await fetch("/api/auth/get-token", {
           method: "GET",
           credentials: "include",
         });
         const data = await bearerToken.json();
         const token = data.token;
-        console.log("Bearer Token:", token);
-        const fileType = formData.profilePicture.type;
-        const presignRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/s3/generate-upload-url?fileType=${fileType}`, {
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-profile`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (!presignRes.ok) {
-          const errorData = await presignRes.text();
-          console.error("Presign failed:", errorData);
-          toast.error("Failed to get upload URL.");
-          return;
+        console.log("Response:", response);
+
+        if (response.ok) {
+          const res = await response.json();
+
+          setFormData((prev) => ({
+            ...prev,
+            gender: res.profile.gender || "",
+            bio: res.profile.bio || "",
+            bloodGroup: res.profile.bloodGroup || "",
+            height: res.profile.height || "",
+            profilePicture: null, // file input is not settable directly
+            address: res.profile.address || "",
+          }));
+          setExistingProfilePic(res.profile.profilePicture || "");
+        } else {
+          console.error("Failed to load profile");
         }
-
-        const { uploadUrl, fileUrl } = await presignRes.json();
-        console.log("Presigned Upload URL:", uploadUrl);
-        console.log("Public File URL:", fileUrl);
-
-        // 2. Upload to S3
-        const uploadRes = await fetch(uploadUrl, {
-          method: "PUT",
-          headers: {
-            "Content-Type": formData.profilePicture.type,
-          },
-          body: formData.profilePicture,
-        });
-
-        if (!uploadRes.ok) {
-          console.error("Upload failed");
-          toast.error("Image upload failed.");
-          return;
-        }
-
-        uploadedImageUrl = fileUrl;
       } catch (err) {
-        console.error("Upload error:", err);
-        toast.error("Network error during upload.");
-        return;
+        console.error("Error fetching profile:", err);
       }
-    }
-
-    // 3. Send profile data to backend
-    const profilePayload = {
-      gender: formData.gender,
-      dob: formData.dob,
-      bio: formData.bio,
-      bloodGroup: formData.bloodGroup,
-      height: formData.height,
-      address: formData.address,
-      profilePicture: uploadedImageUrl,
     };
 
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-profile`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify(profilePayload),
-      });
+    fetchProfile();
+  }, []);
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Profile saved successfully:", data);
-        toast.success("Profile saved!");
-      } else {
-        console.error("Failed to save profile");
-        toast.error("Failed to save profile.");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const bearerToken = await fetch("/api/auth/get-token", {
+      method: "GET",
+      credentials: "include",
+    });
+    const data = await bearerToken.json();
+    const token = data.token;
+
+    if (token) {
+      let uploadedImageUrl = "";
+      if (formData.profilePicture) {
+        try {
+          // 1. Get presigned URL
+          const fileType = formData.profilePicture.type;
+          const presignRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/s3/generate-upload-url?fileType=${fileType}`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!presignRes.ok) {
+            const errorData = await presignRes.text();
+            console.error("Presign failed:", errorData);
+            toast.error("Failed to get upload URL.");
+            return;
+          }
+
+          const { uploadUrl, fileUrl } = await presignRes.json();
+          console.log("Presigned Upload URL:", uploadUrl);
+          console.log("Public File URL:", fileUrl);
+
+          // 2. Upload to S3
+          const uploadRes = await fetch(uploadUrl, {
+            method: "PUT",
+            headers: {
+              "Content-Type": formData.profilePicture.type,
+            },
+            body: formData.profilePicture,
+          });
+
+          if (!uploadRes.ok) {
+            console.error("Upload failed");
+            toast.error("Image upload failed.");
+            return;
+          }
+          uploadedImageUrl = fileUrl;
+
+          const deleteRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/s3/delete-object`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ fileUrl: existingProfilePic }),
+          });
+
+          if (!deleteRes.ok) {
+            const errData = await deleteRes.text();
+            console.warn("Old image deletion failed:", errData);
+            toast.error("Couldn't delete old profile picture.");
+          }
+        } catch (err) {
+          console.error("Upload error:", err);
+          toast.error("Network error during upload.");
+          return;
+        }
       }
-    } catch (err) {
-      console.error("Error submitting form:", err);
-      toast.error("Error submitting profile.");
+
+      // 3. Send profile data to backend
+      const profilePayload = {
+        gender: formData.gender,
+        bio: formData.bio,
+        bloodGroup: formData.bloodGroup,
+        height: formData.height,
+        address: formData.address,
+        profilePicture: uploadedImageUrl,
+      };
+
+      console.log("Profile Payload:", JSON.stringify(profilePayload));
+
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-profile`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify(profilePayload),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Profile saved successfully:", data);
+          toast.success("Profile saved!");
+        } else {
+          console.error("Failed to save profile");
+          toast.error("Failed to save profile.");
+        }
+      } catch (err) {
+        console.error("Error submitting form:", err);
+        toast.error("Error submitting profile.");
+      }
     }
   };
 
@@ -207,6 +269,16 @@ export default function ProfileForm() {
             {/* Profile Picture */}
             <Form.Group className="mb-4" controlId="profilePicture">
               <Form.Label>Profile Picture</Form.Label>
+              {existingProfilePic && (
+                <div className="mb-2">
+                  <img
+                    src={existingProfilePic}
+                    alt="Current profile"
+                    style={{ maxWidth: "150px", borderRadius: "8px" }}
+                  />
+                  <div className="text-muted small">Current profile picture</div>
+                </div>
+              )}
               <Form.Control type="file" onChange={handleFileChange} />
             </Form.Group>
 
